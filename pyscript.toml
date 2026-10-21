@@ -1,0 +1,14 @@
+# PyScript config: copies our Python modules into the in-browser Python file system
+# so they can be imported as the package "tb" (from tb import api, dom, ...).
+[files]
+"./py/__init__.py"   = "./tb/__init__.py"
+"./py/api.py"        = "./tb/api.py"
+"./py/dom.py"        = "./tb/dom.py"
+"./py/state.py"      = "./tb/state.py"
+"./py/fmt.py"        = "./tb/fmt.py"
+"./py/nav.py"        = "./tb/nav.py"
+"./py/services.py"   = "./tb/services.py"
+"./py/cal.py"        = "./tb/cal.py"
+"./py/booking.py"    = "./tb/booking.py"
+"./py/lookup.py"     = "./tb/lookup.py"
+"./py/admin.py"      = "./tb/admin.py"

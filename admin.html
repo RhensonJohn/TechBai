@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>TechBai Admin</title>
+  <link rel="icon" href="assets/logo.jpg">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@pyscript/core@0.7.31/dist/core.css">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@pyscript/core@0.7.31/dist/core.js"></script>
+</head>
+<body class="admin-body">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html"><img src="assets/logo.jpg" alt="" width="44" height="44"><span class="brand-name">Tech<span>Bai</span> <small style="font-size:.9rem;color:var(--on-dark-soft)">Admin</small></span></a>
+      <button class="btn btn--ghost btn--small" id="logout-btn" hidden type="button">Log out</button>
+    </div>
+  </header>
+
+  <main class="container admin-wrap">
+    <!-- login -->
+    <form class="panel login-card" id="login-form" onsubmit="return false">
+      <h3>Staff login</h3>
+      <div class="field">
+        <label for="a-pass">Admin password</label>
+        <input id="a-pass" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="alert alert--error" id="login-msg" hidden role="alert"></div>
+      <button class="btn btn--dark btn--block" id="login-btn" type="submit" disabled>Log in</button>
+    </form>
+
+    <!-- dashboard -->
+    <div id="dashboard" hidden>
+      <div class="stats" id="stats"></div>
+
+      <div class="toolbar">
+        <div class="field"><label for="a-date">Date</label><input id="a-date" type="date"></div>
+        <div class="field"><label for="a-status">Status</label>
+          <select id="a-status">
+            <option value="">All</option><option value="booked">Booked</option><option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option><option value="no_show">No show</option>
+          </select>
+        </div>
+        <button class="btn btn--outline btn--small" id="a-clear" type="button">Show all upcoming</button>
+        <button class="btn btn--dark btn--small" id="a-refresh" type="button">Refresh</button>
+      </div>
+      <div class="alert alert--error" id="admin-msg" hidden role="alert"></div>
+      <div class="table-wrap"><div id="bookings-box"></div></div>
+
+      <h3 style="margin-top:32px">Closed dates</h3>
+      <p class="muted">Block holidays or days off. Customers won't be able to book these dates.</p>
+      <form class="toolbar" id="closure-form" onsubmit="return false">
+        <div class="field"><label for="c-date">Date</label><input id="c-date" type="date" required></div>
+        <div class="field"><label for="c-reason">Reason</label><input id="c-reason" type="text" maxlength="100" placeholder="Holiday"></div>
+        <button class="btn btn--dark btn--small" type="submit">Close this date</button>
+      </form>
+      <ul class="closure-list" id="closure-list"></ul>
+    </div>
+  </main>
+
+  <script type="py" src="./py/admin_main.py" config="./pyscript.toml"></script>
+</body>
+</html>
