@@ -1,0 +1,22 @@
+/* =========================================================
+   admin.css - staff dashboard
+   ========================================================= */
+.admin-body { background: var(--paper); min-height: 100vh; }
+.admin-wrap { padding: 32px 0 64px; }
+.login-card { max-width: 420px; margin: 8vh auto 0; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin-bottom: 18px; }
+.toolbar .field { margin: 0; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.stat { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.stat b { display: block; font-size: 1.7rem; letter-spacing: -.02em; }
+.stat span { color: var(--ink-soft); font-size: .85rem; }
+
+.table-wrap { overflow-x: auto; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); }
+table.data { width: 100%; border-collapse: collapse; font-size: .92rem; min-width: 760px; }
+table.data th { text-align: left; background: var(--navy-900); color: var(--white); padding: 11px 14px; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; }
+table.data td { padding: 11px 14px; border-top: 1px solid var(--line); vertical-align: top; }
+table.data select { padding: 6px 8px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--white); }
+.notes-cell { max-width: 240px; color: var(--ink-soft); }
+.empty { padding: 28px; text-align: center; color: var(--ink-soft); }
+.closure-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.closure-list li { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 9px 12px; }

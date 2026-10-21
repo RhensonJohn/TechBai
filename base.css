@@ -1,0 +1,72 @@
+/* =========================================================
+   base.css - design tokens, reset, typography, utilities
+   ========================================================= */
+:root {
+  /* brand colours (taken from the TechBai logo) */
+  --navy-950: #020a1c;
+  --navy-900: #030d26;
+  --navy-800: #071a3d;
+  --navy-700: #0d2a5c;
+  --aqua: #22d3ee;
+  --aqua-soft: rgba(34, 211, 238, .14);
+  --blue: #2f7df6;
+  --blue-deep: #0b5bd3;
+
+  /* neutrals */
+  --ink: #0b1630;
+  --ink-soft: #4a5a78;
+  --line: #d9e2f0;
+  --paper: #f3f7fc;
+  --white: #ffffff;
+  --on-dark: #e6f1ff;
+  --on-dark-soft: #9db4d8;
+
+  /* status */
+  --ok: #0f9d6a;
+  --warn: #c77700;
+  --bad: #d23a4a;
+
+  --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 10px 30px -12px rgba(3, 13, 38, .25);
+  --gutter: clamp(16px, 4vw, 48px);
+  --header-h: 72px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 12px); }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video { max-width: 100%; display: block; }
+h1, h2, h3, h4 { line-height: 1.15; margin: 0 0 .5em; letter-spacing: -.02em; }
+p { margin: 0 0 1em; }
+a { color: var(--blue-deep); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+.container { width: min(1180px, 100% - 2 * var(--gutter)); margin-inline: auto; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+[hidden] { display: none !important; }
+
+:focus-visible { outline: 3px solid var(--aqua); outline-offset: 2px; border-radius: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+}

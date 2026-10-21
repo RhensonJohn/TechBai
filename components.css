@@ -1,0 +1,85 @@
+/* =========================================================
+   components.css - buttons, cards, chips, forms, alerts
+   ========================================================= */
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 2px solid transparent; border-radius: 999px; padding: 11px 22px;
+  font-weight: 700; text-decoration: none; line-height: 1.2; transition: transform .12s, background .15s, box-shadow .15s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.btn--primary { background: var(--aqua); color: var(--navy-900); box-shadow: 0 8px 22px -8px rgba(34, 211, 238, .7); }
+.btn--primary:hover { background: #5be3f6; }
+.btn--ghost { background: transparent; color: var(--white); border-color: rgba(255, 255, 255, .35); }
+.btn--ghost:hover { border-color: var(--aqua); color: var(--aqua); }
+.btn--dark { background: var(--navy-900); color: var(--white); }
+.btn--dark:hover { background: var(--navy-700); }
+.btn--outline { background: transparent; color: var(--navy-900); border-color: var(--navy-900); }
+.btn--outline:hover { background: var(--navy-900); color: var(--white); }
+.btn--danger { background: transparent; color: var(--bad); border-color: var(--bad); }
+.btn--danger:hover { background: var(--bad); color: var(--white); }
+.btn--block { width: 100%; }
+.btn--small { padding: 7px 14px; font-size: .88rem; }
+
+/* ---------- filter chips ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+.chip {
+  border: 1px solid var(--line); background: var(--white); color: var(--ink);
+  padding: 8px 16px; border-radius: 999px; font-weight: 600; font-size: .92rem;
+}
+.chip:hover { border-color: var(--blue); }
+.chip[aria-pressed="true"] { background: var(--navy-900); border-color: var(--navy-900); color: var(--white); }
+
+/* ---------- service cards ---------- */
+.service-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+.service-card {
+  display: flex; flex-direction: column; background: var(--white); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px; transition: box-shadow .2s, transform .2s, border-color .2s;
+}
+.service-card:hover { box-shadow: var(--shadow); transform: translateY(-3px); border-color: var(--aqua); }
+.service-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
+.badge {
+  font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px; background: var(--aqua-soft); color: #0a6f84;
+}
+.badge--device { background: #e8f0ff; color: var(--blue-deep); }
+.service-card h3 { font-size: 1.15rem; }
+.service-card p { color: var(--ink-soft); font-size: .95rem; flex: 1; }
+.service-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 6px; }
+.price { font-size: 1.5rem; font-weight: 800; color: var(--navy-900); letter-spacing: -.02em; }
+.price small { font-size: .75rem; font-weight: 600; color: var(--ink-soft); margin-right: 3px; letter-spacing: 0; }
+.price-note { font-size: .88rem; color: var(--ink-soft); margin-top: 22px; }
+
+/* ---------- forms ---------- */
+.field { margin-bottom: 14px; }
+.field label { display: block; font-weight: 700; font-size: .9rem; margin-bottom: 5px; }
+.field .opt { font-weight: 400; color: var(--ink-soft); }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: var(--white);
+}
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(47, 125, 246, .18); }
+.field textarea { resize: vertical; min-height: 84px; }
+.field.has-error input, .field.has-error select, .field.has-error textarea { border-color: var(--bad); }
+.field-error { color: var(--bad); font-size: .85rem; margin: 4px 0 0; min-height: 0; }
+.field-hint { color: var(--ink-soft); font-size: .82rem; margin: 4px 0 0; }
+
+/* ---------- alerts ---------- */
+.alert { border-radius: var(--radius-sm); padding: 12px 14px; font-size: .94rem; margin: 0 0 14px; border: 1px solid; }
+.alert--error { background: #fdecee; border-color: #f4b8bf; color: #8f1f2c; }
+.alert--ok { background: #e6f7f0; border-color: #a6e0c8; color: #0a6a47; }
+.alert--info { background: #eaf2ff; border-color: #bcd4fb; color: #174a99; }
+
+.panel { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(18px, 2.5vw, 28px); box-shadow: var(--shadow); }
+.panel h3 { font-size: 1.15rem; margin-bottom: 14px; }
+.muted { color: var(--ink-soft); }
+
+.skeleton { background: linear-gradient(90deg, #e8eef8, #f6f9fd, #e8eef8); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius); min-height: 150px; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.status-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 800; text-transform: capitalize; }
+.status-booked { background: #e8f0ff; color: var(--blue-deep); }
+.status-completed { background: #e6f7f0; color: var(--ok); }
+.status-cancelled { background: #fdecee; color: var(--bad); }
+.status-no_show { background: #fff3dc; color: var(--warn); }
