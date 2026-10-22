@@ -1,0 +1,26 @@
+{
+  "currency": "PHP",
+  "note": "Starter prices - edit freely. 'from' means the final price depends on the diagnosis.",
+  "services": [
+    {"id": "ts-mobile", "category": "Troubleshooting", "device": "Mobile", "name": "Mobile Troubleshooting",
+     "description": "Slow phone, app crashes, boot loops, storage, software and virus checks.", "price": 150, "from": false},
+    {"id": "ts-pc", "category": "Troubleshooting", "device": "PC", "name": "PC Troubleshooting",
+     "description": "Slow or freezing PC, Windows errors, driver issues, malware removal.", "price": 200, "from": false},
+
+    {"id": "dc-mobile", "category": "Deep Cleaning", "device": "Mobile", "name": "Mobile Deep Cleaning",
+     "description": "Ports, speakers, camera and body cleaned; screen and back disinfected.", "price": 200, "from": false},
+    {"id": "dc-pc", "category": "Deep Cleaning", "device": "PC", "name": "PC Deep Cleaning",
+     "description": "Dust removal, fan and heatsink cleaning, thermal paste check, cable tidy-up.", "price": 350, "from": false},
+
+    {"id": "build-pc", "category": "Building PC", "device": "PC", "name": "PC Building Service",
+     "description": "Parts consultation, full assembly, cable management, OS and driver install, stress test.", "price": 500, "from": true},
+
+    {"id": "repair-mobile", "category": "Repair", "device": "Mobile", "name": "Mobile Repair",
+     "description": "Screen, battery, charging port, speaker and other hardware repair (parts quoted separately).", "price": 300, "from": true},
+    {"id": "repair-pc", "category": "Repair", "device": "PC", "name": "PC Repair",
+     "description": "Motherboard, power supply, RAM, storage and other hardware repair (parts quoted separately).", "price": 350, "from": true},
+
+    {"id": "wifi-config", "category": "Wi-Fi Configuration", "device": "Network", "name": "Wi-Fi Configuration",
+     "description": "Router setup, secure password, signal optimization and device connection.", "price": 200, "from": false}
+  ]
+}
