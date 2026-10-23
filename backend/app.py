@@ -302,6 +302,29 @@ def admin_remove_closure(day):
     return jsonify({"ok": True})
 
 
+@app.get("/api/health")
+def health():
+    """Quick check that shows which database is in use and whether it answers."""
+    mode = "postgres" if db.USE_POSTGRES else "sqlite"
+    try:
+        db.ensure_ready()
+    except Exception as exc:
+        print("Database error:", repr(exc))
+        return jsonify({"database": mode, "ok": False, "error": type(exc).__name__}), 503
+    return jsonify({"database": mode, "ok": True})
+
+
+@app.before_request
+def database_guard():
+    """Give a clear JSON error (instead of a crash) if the database can't be reached."""
+    if request.path.startswith("/api/") and request.path not in ("/api/config", "/api/services", "/api/health"):
+        try:
+            db.ensure_ready()
+        except Exception as exc:
+            print("Database error:", repr(exc))
+            return error("The booking database isn't reachable right now. Please try again later.", 503)
+
+
 # ---- frontend -----------------------------------------------------------
 @app.get("/")
 def index():
@@ -325,4 +348,3 @@ def security_headers(resp):
     return resp
 
 
-db.init_db()

@@ -5,9 +5,20 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 FRONTEND_DIR = BASE_DIR.parent / "frontend"
-# Database: set DATABASE_URL (or POSTGRES_URL) to use Postgres - needed on Vercel, whose disk is
-# temporary. Without it the app uses the local SQLite file below (fine for your own computer).
-DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL") or ""
+# Database: when a Postgres address is set, the app uses Postgres - needed on Vercel, whose disk is
+# temporary. Without one it uses the local SQLite file below (fine for your own computer).
+def _find_database_url() -> str:
+    """DATABASE_URL / POSTGRES_URL, or any variable holding a postgres:// address (Vercel's Neon
+    setup may add a prefix such as STORAGE_URL). Pooled addresses are preferred on serverless."""
+    for name in ("DATABASE_URL", "POSTGRES_URL"):
+        if os.environ.get(name, "").startswith(("postgres://", "postgresql://")):
+            return os.environ[name]
+    found = [(k, v) for k, v in os.environ.items() if v.startswith(("postgres://", "postgresql://"))]
+    found.sort(key=lambda kv: (any(bad in kv[0] for bad in ("UNPOOLED", "NON_POOLING", "NO_SSL", "PRISMA")), kv[0]))
+    return found[0][1] if found else ""
+
+
+DATABASE_URL = _find_database_url()
 DB_PATH = Path(os.environ.get("TECHBAI_DB", BASE_DIR / "techbai.db"))
 SERVICES_FILE = BASE_DIR / "services.json"
 

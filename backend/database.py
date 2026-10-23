@@ -104,6 +104,16 @@ def init_db() -> None:
             raw.close()
 
 
+_ready = {"ok": False}
+
+
+def ensure_ready() -> None:
+    """Create the tables on first use (not at import, so a database problem can't crash startup)."""
+    if not _ready["ok"]:
+        init_db()
+        _ready["ok"] = True
+
+
 def load_services() -> list[dict]:
     with open(config.SERVICES_FILE, encoding="utf-8") as fh:
         return json.load(fh)["services"]
