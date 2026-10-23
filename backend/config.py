@@ -5,6 +5,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 FRONTEND_DIR = BASE_DIR.parent / "frontend"
+# Database: set DATABASE_URL (or POSTGRES_URL) to use Postgres - needed on Vercel, whose disk is
+# temporary. Without it the app uses the local SQLite file below (fine for your own computer).
+DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("POSTGRES_URL") or ""
 DB_PATH = Path(os.environ.get("TECHBAI_DB", BASE_DIR / "techbai.db"))
 SERVICES_FILE = BASE_DIR / "services.json"
 
@@ -27,3 +30,5 @@ MIN_LEAD_MINUTES = 60     # same-day bookings must start at least this far ahead
 # at startup and printed to the console (see app.py).
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
 BOOKINGS_PER_IP_PER_HOUR = 10
+# Behind a proxy (Vercel) the real visitor IP is in a header. Only trust it when hosted there.
+TRUST_PROXY = bool(os.environ.get("VERCEL") or os.environ.get("TRUST_PROXY"))

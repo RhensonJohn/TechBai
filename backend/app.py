@@ -30,8 +30,16 @@ MONTH_RE = re.compile(r"^\d{4}-\d{2}$")
 _hits: dict[str, deque] = defaultdict(deque)
 
 
+def client_ip() -> str:
+    if config.TRUST_PROXY:  # hosted behind Vercel: the visitor's IP is in a header
+        forwarded = request.headers.get("X-Real-IP") or request.headers.get("X-Forwarded-For", "")
+        if forwarded:
+            return forwarded.split(",")[0].strip()
+    return request.remote_addr or "unknown"
+
+
 def rate_limited(bucket: str, limit: int, per_seconds: int = 3600) -> bool:
-    key = f"{bucket}:{request.remote_addr}"
+    key = f"{bucket}:{client_ip()}"
     q, now = _hits[key], time.monotonic()
     while q and now - q[0] > per_seconds:
         q.popleft()
@@ -277,7 +285,8 @@ def admin_add_closure():
     if not day:
         return error("Bad date")
     with db.connect() as con:
-        con.execute("INSERT OR REPLACE INTO closures (day, reason) VALUES (?,?)",
+        con.execute("INSERT INTO closures (day, reason) VALUES (?,?) "
+                    "ON CONFLICT (day) DO UPDATE SET reason = excluded.reason",
                     (day.isoformat(), str(body.get("reason", ""))[:100]))
     return jsonify({"ok": True})
 

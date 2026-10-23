@@ -1,0 +1,4 @@
+tests/
+.git/
+backend/*.db*
+__pycache__/

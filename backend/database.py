@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 import config
 
-SCHEMA = """
+SCHEMA_SQLITE = """
 CREATE TABLE IF NOT EXISTS bookings (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     ref           TEXT    NOT NULL UNIQUE,
@@ -32,24 +32,76 @@ CREATE TABLE IF NOT EXISTS closures (
 );
 """
 
+SCHEMA_POSTGRES = [
+    """CREATE TABLE IF NOT EXISTS bookings (
+        id            SERIAL PRIMARY KEY,
+        ref           TEXT    NOT NULL UNIQUE,
+        name          TEXT    NOT NULL,
+        phone         TEXT    NOT NULL,
+        email         TEXT    NOT NULL DEFAULT '',
+        service_id    TEXT    NOT NULL,
+        service_name  TEXT    NOT NULL,
+        price         INTEGER NOT NULL,
+        price_from    INTEGER NOT NULL DEFAULT 0,
+        notes         TEXT    NOT NULL DEFAULT '',
+        booking_date  TEXT    NOT NULL,
+        booking_time  TEXT    NOT NULL,
+        status        TEXT    NOT NULL DEFAULT 'booked',
+        created_at    TEXT    NOT NULL
+    )""",
+    "CREATE INDEX IF NOT EXISTS idx_bookings_slot ON bookings (booking_date, booking_time)",
+    "CREATE TABLE IF NOT EXISTS closures (day TEXT PRIMARY KEY, reason TEXT NOT NULL DEFAULT '')",
+]
+
+USE_POSTGRES = bool(config.DATABASE_URL)
+
 STATUSES = ("booked", "completed", "cancelled", "no_show")
 REF_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"  # no 0/O/1/I/L confusion
 
 
+class _PgConnection:
+    """Makes a psycopg connection look like our SQLite one: '?' placeholders, dict rows."""
+
+    def __init__(self, con):
+        self._con = con
+
+    def execute(self, sql, args=()):
+        return self._con.execute(sql.replace("?", "%s"), tuple(args))
+
+
 @contextmanager
 def connect():
-    con = sqlite3.connect(config.DB_PATH, timeout=10, isolation_level=None)
-    con.row_factory = sqlite3.Row
-    try:
-        yield con
-    finally:
-        con.close()
+    if USE_POSTGRES:
+        import psycopg
+        from psycopg.rows import dict_row
+        con = psycopg.connect(config.DATABASE_URL, row_factory=dict_row, autocommit=True,
+                              connect_timeout=10)
+        try:
+            yield _PgConnection(con)
+        finally:
+            con.close()
+    else:
+        con = sqlite3.connect(config.DB_PATH, timeout=10, isolation_level=None)
+        con.row_factory = sqlite3.Row
+        try:
+            yield con
+        finally:
+            con.close()
 
 
 def init_db() -> None:
     with connect() as con:
-        con.execute("PRAGMA journal_mode=WAL")
-        con.executescript(SCHEMA)
+        if USE_POSTGRES:
+            for statement in SCHEMA_POSTGRES:
+                con.execute(statement)
+        else:
+            con.execute("PRAGMA journal_mode=WAL")
+    if not USE_POSTGRES:
+        raw = sqlite3.connect(config.DB_PATH, isolation_level=None)
+        try:
+            raw.executescript(SCHEMA_SQLITE)
+        finally:
+            raw.close()
 
 
 def load_services() -> list[dict]:
@@ -95,16 +147,21 @@ class SlotTaken(Exception):
 def create_booking(data: dict, service: dict) -> dict:
     """Insert a booking atomically; raises SlotTaken if the slot just filled up."""
     with connect() as con:
-        con.execute("BEGIN IMMEDIATE")  # serialize writers -> no double booking
+        if USE_POSTGRES:
+            con.execute("BEGIN")
+            # one lock per slot: two people booking the same slot are handled one after the other
+            con.execute("SELECT pg_advisory_xact_lock(hashtext(?))", (data["date"] + " " + data["time"],))
+        else:
+            con.execute("BEGIN IMMEDIATE")  # serialize writers -> no double booking
         try:
             taken = con.execute(
-                "SELECT COUNT(*) FROM bookings WHERE booking_date=? AND booking_time=? "
+                "SELECT COUNT(*) AS n FROM bookings WHERE booking_date=? AND booking_time=? "
                 "AND status NOT IN ('cancelled')",
-                (data["date"], data["time"])).fetchone()[0]
+                (data["date"], data["time"])).fetchone()["n"]
             if taken >= config.SLOT_CAPACITY:
                 raise SlotTaken()
             ref = new_ref()
-            while con.execute("SELECT 1 FROM bookings WHERE ref=?", (ref,)).fetchone():
+            while con.execute("SELECT 1 AS x FROM bookings WHERE ref=?", (ref,)).fetchone():
                 ref = new_ref()
             con.execute(
                 "INSERT INTO bookings (ref,name,phone,email,service_id,service_name,price,"
@@ -121,6 +178,6 @@ def create_booking(data: dict, service: dict) -> dict:
     return {"ref": ref}
 
 
-def row_to_public(r: sqlite3.Row) -> dict:
+def row_to_public(r) -> dict:
     return {k: r[k] for k in ("ref", "name", "service_name", "price", "price_from",
                               "notes", "booking_date", "booking_time", "status")}
